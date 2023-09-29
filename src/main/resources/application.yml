@@ -1,0 +1,10 @@
+spring:
+  r2dbc:
+    url: r2dbc:pool:postgres://localhost:5432/security_database
+    username: postgres
+    password: changeme
+  flyway:
+    url: jdbc:postgresql://localhost:5432/security_database
+    locations: classpath:db/migration
+    user: ${spring.r2dbc.username}
+    password: ${spring.r2dbc.password}
