@@ -8,3 +8,8 @@ spring:
     locations: classpath:db/migration
     user: ${spring.r2dbc.username}
     password: ${spring.r2dbc.password}
+
+jwt:
+  secret: ruski$dolboeb
+  issuer: demo-security
+  expirationTime: 30m
