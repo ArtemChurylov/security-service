@@ -1,11 +1,17 @@
 package com.example.security.securityservice.config
 
+import com.example.security.securityservice.entity.UserRole
+import com.example.security.securityservice.jwt.JwtAuthenticationManager
+import com.example.security.securityservice.jwt.JwtTokenAuthenticationConverter
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.http.HttpMethod
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder
 import org.springframework.security.config.web.server.ServerHttpSecurity
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.server.SecurityWebFilterChain
+import org.springframework.security.web.server.authentication.AuthenticationWebFilter
 import java.security.SecureRandom
 
 @Configuration
@@ -14,14 +20,21 @@ class SecurityConfig {
     val whiteList = arrayOf("api/v1/auth/register", "api/v1/auth/login")
 
     @Bean
-    fun springSecurityFilterChain(http: ServerHttpSecurity): SecurityWebFilterChain {
+    fun springSecurityFilterChain(http: ServerHttpSecurity, jwtAuthFilter: AuthenticationWebFilter): SecurityWebFilterChain {
         return http
             .csrf { it.disable() }
             .authorizeExchange {
-                it.pathMatchers(*whiteList).permitAll()
+                it.pathMatchers(HttpMethod.POST, *whiteList).permitAll()
+                    .pathMatchers(HttpMethod.GET,"api/v1/user").hasAuthority(UserRole.ADMIN.toString())
                     .anyExchange().authenticated()
             }
+            .addFilterAt(jwtAuthFilter, SecurityWebFiltersOrder.AUTHENTICATION)
             .build()
+    }
+
+    @Bean
+    fun jwtAuthFilter(authenticationManager: JwtAuthenticationManager, converter: JwtTokenAuthenticationConverter): AuthenticationWebFilter {
+        return AuthenticationWebFilter(authenticationManager).apply { setServerAuthenticationConverter(converter) }
     }
 
     @Bean

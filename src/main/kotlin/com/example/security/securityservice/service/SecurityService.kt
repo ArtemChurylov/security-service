@@ -1,5 +1,6 @@
 package com.example.security.securityservice.service
 
+import com.example.security.securityservice.exception.AuthenticationException
 import com.example.security.securityservice.jwt.JwtTokenDetails
 import com.example.security.securityservice.jwt.JwtTokenGenerator
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -16,11 +17,11 @@ class SecurityService(
         val user = userService.findUserByEmail(email)
 
         if (!user.enabled) {
-            throw RuntimeException("User is disabled")
+            throw AuthenticationException("User ${user.id} is disabled")
         }
 
         if (!passwordEncoder.matches(password, user.password)) {
-            throw RuntimeException("Passwords doesn't match")
+            throw AuthenticationException("Password doesn't match")
         }
 
         return jwtTokenGenerator.generateToken(user)
