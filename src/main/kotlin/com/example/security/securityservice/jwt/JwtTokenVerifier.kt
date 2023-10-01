@@ -1,6 +1,6 @@
 package com.example.security.securityservice.jwt
 
-import com.example.security.securityservice.exception.AuthenticationException
+import com.example.security.securityservice.exception.InvalidTokenException
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import org.springframework.stereotype.Component
@@ -13,7 +13,7 @@ class JwtTokenVerifier(val jwtProperties: JwtProperties) {
         try {
             return JwtTokenVerificationResult(getClaims(token), token)
         } catch (exception: Exception) {
-            throw AuthenticationException("Invalid token", exception)
+            throw InvalidTokenException("Invalid token", exception)
         }
     }
 

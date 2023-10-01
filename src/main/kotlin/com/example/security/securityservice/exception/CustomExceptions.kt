@@ -1,5 +1,7 @@
 package com.example.security.securityservice.exception
 
-class AuthenticationException(message: String, exception: Throwable? = null) : RuntimeException(message, exception)
+import org.springframework.security.core.AuthenticationException
+
+class InvalidTokenException(message: String, exception: Throwable? = null) : AuthenticationException(message, exception)
 
 class UserNotFoundException(message: String) : RuntimeException(message)
